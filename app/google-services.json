@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "335431633210",
+    "project_id": "chatapp-ac32c",
+    "storage_bucket": "chatapp-ac32c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335431633210:android:f537ff6af746a20fa6a803",
+        "android_client_info": {
+          "package_name": "com.ozalp.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335431633210-8v37fu7ejk7q2rr0hkm4jdtpv14gfntk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRB2Us8vs9u8syDBSHCaJsfxp6HRWbq9M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335431633210-8v37fu7ejk7q2rr0hkm4jdtpv14gfntk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -68,8 +68,7 @@
             android:padding="35dp"
             android:layout_gravity="center"
             android:textStyle="bold"
-            android:textSize="24dp"
-            android:text="message Username" />
+            android:textSize="24dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messageView"

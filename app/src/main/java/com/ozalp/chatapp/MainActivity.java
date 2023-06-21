@@ -57,47 +57,37 @@ public class MainActivity extends AppCompatActivity {
             linearLayoutUserLogin.setVisibility(View.GONE);
             linearLayoutMessages.setVisibility(View.VISIBLE);
 
-            //get who are u ?
-            /*
-            firestore.collection("Messages")
-                    .document("/"+whoAmI+"/message/CCSs2W4I27jPzux5UBLE")
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    whoAreYou = (String) documentSnapshot.getData().get("sender");
-                    messageUsername.setText(whoAreYou);
-                }
-            });
-            */
+            getMessages();
+        }
+    }
 
-            try {
-                firestore.collection("Messages"+"/"+whoAmI+"/message")
-                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(value != null){
-                            Map map = new HashMap();
-                            for(int i = 0; i<value.size(); i++){
-                                map = value.getDocuments().get(i).getData();
-                                Messages message = new Messages((String) map.get("sender"), (String) map.get("message"));
-                                messagesList.add(message);
+    private void getMessages() {
+        try {
+            firestore.collection("Messages"+"/"+whoAmI+"/message")
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if(value != null){
+                                Map map = new HashMap();
+                                for(int i = 0; i<value.size(); i++){
+                                    map = value.getDocuments().get(i).getData();
+                                    Messages message = new Messages((String) map.get("sender"), (String) map.get("message"));
+                                    messagesList.add(message);
+                                }
+                                binding.messageView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                                ChatAdapter chatAdapter = new ChatAdapter(messagesList);
+                                binding.messageView.setAdapter(chatAdapter);
+
+                                chatAdapter.notifyDataSetChanged();
                             }
-                            binding.messageView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                            new ChatAdapter(messagesList);
-                            binding.messageView.setAdapter(new ChatAdapter(messagesList));
+
+                            if(error != null){
+                                Toast.makeText(getApplicationContext(),"error",Toast.LENGTH_LONG).show();
+                            }
                         }
-
-                        if(error != null){
-                            Toast.makeText(getApplicationContext(),"error",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-
-
+                    });
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
     }
 
@@ -121,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(AuthResult authResult) {
                 linearLayoutUserLogin.setVisibility(View.GONE);
                 linearLayoutMessages.setVisibility(View.VISIBLE);
+                getMessages();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

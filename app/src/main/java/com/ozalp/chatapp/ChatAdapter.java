@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
-    List messageList = new ArrayList<>();
-    public ChatAdapter(List messageList){
-        this.messageList = messageList;
+    List<Messages> messagesList = new ArrayList<>();
+    public ChatAdapter(List<Messages> messagesList){
+        this.messagesList = messagesList;
     }
 
     public ChatHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -23,11 +23,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
     }
 
     public void onBindViewHolder(ChatHolder holder, int position){
-        holder.chatRowBinding.message.setText(messageList.get(position).toString());
+        holder.chatRowBinding.message.setText(messagesList.get(position).message);
     }
 
     public int getItemCount(){
-        return messageList.size();
+        return messagesList.size();
     }
     public class ChatHolder extends RecyclerView.ViewHolder {
         ChatRowBinding chatRowBinding;

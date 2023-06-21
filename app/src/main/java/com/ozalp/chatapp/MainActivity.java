@@ -61,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
             linearLayoutMessages.setVisibility(View.VISIBLE);
 
             getMessages();
+            setWhoAreYou();
         }
 
-        setWhoAreYou();
     }
 
     public void setWhoAreYou(){
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                                 binding.messageView.setLayoutManager(layoutManager);
                                 ChatAdapter chatAdapter = new ChatAdapter(messagesList, whoAmI);
                                 binding.messageView.setAdapter(chatAdapter);
-                                chatAdapter.notifyDataSetChanged();
+                                //chatAdapter.notifyDataSetChanged();
                             }
 
                             if(error != null){

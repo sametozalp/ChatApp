@@ -1,20 +1,10 @@
 package com.ozalp.chatapp;
 
-import android.graphics.Paint;
-import android.text.Layout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TableRow;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.ozalp.chatapp.databinding.ChatRowBinding;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +22,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
     }
 
     public void onBindViewHolder(ChatHolder holder, int position){
-        holder.chatRowBinding.message.setText(messagesList.get(position).message);
+
+        if (messagesList.get(position).sender.matches(whoAmI)){
+            holder.chatRowBinding.message.setText(messagesList.get(position).message);
+            holder.chatRowBinding.message.setGravity(Gravity.RIGHT);
+        }
+        else {
+            holder.chatRowBinding.message.setText(messagesList.get(position).message);
+        }
 
     }
 

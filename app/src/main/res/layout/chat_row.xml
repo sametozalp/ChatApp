@@ -16,6 +16,7 @@
             android:textSize="18dp"
             android:background="@drawable/border"
             android:textStyle="bold"
-            android:id="@+id/message"></TextView>
+            android:id="@+id/message">
+        </TextView>
 
 </LinearLayout>

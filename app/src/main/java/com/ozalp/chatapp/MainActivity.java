@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,9 +16,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ozalp.chatapp.databinding.ActivityMainBinding;
 
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     String whoAreYou = null; // your email
     TextView messageUsername;
     List<Messages> messagesList;
+    TextView writeMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +62,70 @@ public class MainActivity extends AppCompatActivity {
 
             getMessages();
         }
+
+        setWhoAreYou();
+    }
+
+    public void setWhoAreYou(){
+        firestore.collection("Messages").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(queryDocumentSnapshots != null){
+                    for (int i = 0; i<queryDocumentSnapshots.getDocuments().size(); i++){
+                        if (!(queryDocumentSnapshots.getDocuments().get(i).getId().matches(whoAmI))){
+                            whoAreYou = queryDocumentSnapshots.getDocuments().get(i).getId();
+                            System.out.println("who are u? " + whoAreYou);
+                            binding.messageUsername.setText(whoAreYou);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void send(View view){
+        String message = writeMessage.getText().toString();
+        if(!(message.isEmpty())){
+
+            Map messageMap = new HashMap();
+            messageMap.put("message",message);
+            messageMap.put("sender",whoAmI);
+            messageMap.put("time", FieldValue.serverTimestamp());
+
+            firestore.collection("Messages/"+whoAmI+"/message")
+                    .document()
+                    .set(messageMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    firestore.collection("Messages/"+whoAreYou+"/message").document().set(messageMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            writeMessage.setText("");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(),"error",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(),"error",Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+
+        }
     }
 
     private void getMessages() {
         try {
             firestore.collection("Messages"+"/"+whoAmI+"/message")
+                    .orderBy("time", Query.Direction.ASCENDING)
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -74,10 +136,11 @@ public class MainActivity extends AppCompatActivity {
                                     Messages message = new Messages((String) map.get("sender"), (String) map.get("message"));
                                     messagesList.add(message);
                                 }
-                                binding.messageView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                                ChatAdapter chatAdapter = new ChatAdapter(messagesList);
+                                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                                layoutManager.setStackFromEnd(true); // ilk açılışta sondan başlıyor
+                                binding.messageView.setLayoutManager(layoutManager);
+                                ChatAdapter chatAdapter = new ChatAdapter(messagesList, whoAmI);
                                 binding.messageView.setAdapter(chatAdapter);
-
                                 chatAdapter.notifyDataSetChanged();
                             }
 
@@ -100,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutMessages = binding.linearLayoutMessages;
         messageUsername = binding.messageUsername;
         messagesList = new ArrayList<>();
+        writeMessage = binding.writeMessage;
     }
 
     public void login(View view){
@@ -112,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
                 linearLayoutUserLogin.setVisibility(View.GONE);
                 linearLayoutMessages.setVisibility(View.VISIBLE);
                 getMessages();
+                setWhoAreYou();
+                whoAmI = email.getText().toString();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

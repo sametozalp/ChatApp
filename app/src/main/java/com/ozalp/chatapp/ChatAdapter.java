@@ -24,8 +24,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
     public void onBindViewHolder(ChatHolder holder, int position){
 
         if (messagesList.get(position).sender.matches(whoAmI)){
-            holder.chatRowBinding.message.setText(messagesList.get(position).message);
             holder.chatRowBinding.message.setGravity(Gravity.RIGHT);
+            holder.chatRowBinding.message.setText(messagesList.get(position).message);
         }
         else {
             holder.chatRowBinding.message.setText(messagesList.get(position).message);

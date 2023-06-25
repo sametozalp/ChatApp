@@ -130,7 +130,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                             if(value != null){
-                                Map map = new HashMap();
+                                boolean a = false;
+                                messagesList.clear();
+                                Map map = new HashMap(); //Sürekli birden fazla kez sohbetleri getirmesini önlüyor.
                                 for(int i = 0; i<value.size(); i++){
                                     map = value.getDocuments().get(i).getData();
                                     Messages message = new Messages((String) map.get("sender"), (String) map.get("message"));
@@ -140,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
                                 layoutManager.setStackFromEnd(true); // ilk açılışta sondan başlıyor
                                 binding.messageView.setLayoutManager(layoutManager);
                                 ChatAdapter chatAdapter = new ChatAdapter(messagesList, whoAmI);
-                                binding.messageView.setAdapter(chatAdapter);
-                                //chatAdapter.notifyDataSetChanged();
+                                    binding.messageView.setAdapter(chatAdapter);
+                                    a= true;
+                                chatAdapter.notifyDataSetChanged();
                             }
 
                             if(error != null){
